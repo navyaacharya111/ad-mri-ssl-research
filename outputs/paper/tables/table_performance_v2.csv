@@ -1,0 +1,9 @@
+Method,Run,Test set,Accuracy,Balanced accuracy,Macro-F1,Macro ROC-AUC (OvR),CN-vs-AD ROC-AUC
+Supervised,Run 1 (seed 43),ADNI test,0.492,0.429,0.395,0.535,0.700
+Supervised,Run 1 (seed 43),OASIS-1,0.318,0.396,0.281,0.563,0.654
+Supervised,Run 2 (seed 44),ADNI test,0.557,0.507,0.513,0.647,0.793
+Supervised,Run 2 (seed 44),OASIS-1,0.354,0.376,0.340,0.538,0.636
+SimCLR fine-tuned,Run 1 (seed 43),ADNI test,0.459,0.396,0.380,0.673,0.893
+SimCLR fine-tuned,Run 1 (seed 43),OASIS-1,0.237,0.389,0.210,0.610,0.702
+SimCLR fine-tuned,Run 2 (seed 44),ADNI test,0.377,0.424,0.340,0.569,0.867
+SimCLR fine-tuned,Run 2 (seed 44),OASIS-1,0.237,0.391,0.190,0.649,0.829

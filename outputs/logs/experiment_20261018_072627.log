@@ -1,0 +1,458 @@
+
+======================================================================
+AD-MRI SSL RESEARCH EXPERIMENT
+======================================================================
+Log file: C:\Users\navya\ad-mri-ssl-research\outputs\logs\experiment_20261018_072627.log
+
+Research Question:
+Does self-supervised pretraining improve cross-dataset generalization
+of Alzheimer's disease MRI classification?
+
+======================================================================
+
+======================================================================
+STARTING EXPERIMENT SUITE
+======================================================================
+Number of runs: 2
+Dataset: adni
+Experiment version: v3_f1select_reg_probe
+Settings: {'supervised_learning_rate': 0.0003, 'finetune_learning_rate': 0.0001, 'weight_decay': 0.01, 'label_smoothing': 0.1, 'pretrain_epochs': 30, 'linear_probe_learning_rate': 0.001, 'linear_probe_epochs': 50}
+Device: cpu
+Per-run results: C:\Users\navya\ad-mri-ssl-research\outputs\results\runs
+Checkpoints:     C:\Users\navya\ad-mri-ssl-research\outputs\checkpoints
+
+[Resume] Run 1 already finished - loading run_1_seed_43_adni_v3_f1select_reg_probe.json
+
+======================================================================
+RUN 2/2 (Seed: 44)
+======================================================================
+
+[Step 1] Loading dataset and creating splits...
+
+[Dataset] Initializing ADNI dataset...
+[Dataset] Labels: C:\Users\navya\ad-mri-ssl-research\data\raw\ADNI_diagnoses.csv
+[Dataset] Images: C:\Users\navya\ad-mri-ssl-research\data\raw\ADNI\ADNI
+[Dataset] Skipped 10 folders with no valid label, 1 with no 3D scan (fewer than 40 slices)
+[Dataset] Loaded 387 subjects  (CN=158, MCI=193, AD=36)
+
+[Splitter] Creating subject-level splits...
+[Splitter] Total subjects: 387
+[Splitter] Split ratios: train=0.7, val=0.15, test=0.15
+
+[Splitter] Split assignments:
+  Train: 270 subjects (69.8%)
+  Val:   56 subjects (14.5%)
+  Test:  61 subjects (15.8%)
+[Splitter] ✓ No leakage detected - splits are clean!
+
+[DataLoader] Creating PyTorch DataLoaders...
+
+[DataLoader] Creating train dataset with 270 subjects
+[DataLoader] Extracted 8640 slices from 270 subjects
+
+[DataLoader] Creating val dataset with 56 subjects
+[DataLoader] Extracted 1792 slices from 56 subjects
+
+[DataLoader] Creating test dataset with 61 subjects
+[DataLoader] Extracted 1952 slices from 61 subjects
+[DataLoader] Train loader: 540 batches
+[DataLoader] Val loader:   112 batches
+[DataLoader] Test loader:  122 batches
+[ClassWeights] Train subjects per class (CN, MCI, AD): [110, 135, 25]
+[ClassWeights] Loss weights (CN, MCI, AD): [0.818, 0.667, 3.6]
+
+[Step 2] Training supervised baseline...
+
+======================================================================
+SUPERVISED TRAINING (baseline)
+======================================================================
+  lr=0.0003, weight_decay=0.01, label_smoothing=0.1, selection = subject-level val macro-F1
+[Checkpoint] Stage already finished - loaded weights from C:\Users\navya\ad-mri-ssl-research\outputs\checkpoints\run_2_seed_44_adni_v3_f1select_reg_probe\supervised.pt
+
+[Step 2] Evaluating supervised model...
+
+[Evaluate] Making predictions on test set...
+
+[Evaluate] Aggregating predictions to subject level...
+[Evaluate] Evaluated 61 subjects
+
+[Step 3] Training SSL (SimCLR pretraining)...
+
+======================================================================
+SELF-SUPERVISED PRETRAINING (SimCLR)
+======================================================================
+[Checkpoint] Resuming from epoch 21 (C:\Users\navya\ad-mri-ssl-research\outputs\checkpoints\run_2_seed_44_adni_v3_f1select_reg_probe\simclr_pretrain.pt)
+
+[Epoch 21/30]
+  Loss: 1.7429
+
+[Epoch 22/30]
+  Loss: 1.7328
+
+[Epoch 23/30]
+  Loss: 1.7352
+
+[Epoch 24/30]
+  Loss: 1.7213
+
+[Epoch 25/30]
+  Loss: 1.7148
+
+[Epoch 26/30]
+  Loss: 1.7072
+
+[Epoch 27/30]
+  Loss: 1.7020
+
+[Epoch 28/30]
+  Loss: 1.6948
+
+[Epoch 29/30]
+  Loss: 1.6960
+
+[Epoch 30/30]
+  Loss: 1.6926
+
+======================================================================
+[OK] Pretraining completed!
+======================================================================
+
+[Step 3b] Linear probe (frozen SimCLR encoder + linear layer)...
+
+======================================================================
+LINEAR PROBE (frozen SimCLR encoder)
+======================================================================
+  lr=0.001, weight_decay=0.01, label_smoothing=0.1, selection = subject-level val macro-F1
+
+[Epoch 1/50]
+  Train Loss: 1.1841, Acc: 0.3545
+  Val Loss:   1.1738, Acc: 0.3253 | subject macro-F1: 0.2556, balanced acc: 0.3942
+  (new best model)
+
+[Epoch 2/50]
+  Train Loss: 1.1691, Acc: 0.3630
+  Val Loss:   1.1281, Acc: 0.3415 | subject macro-F1: 0.2582, balanced acc: 0.3942
+  (new best model)
+
+[Epoch 3/50]
+  Train Loss: 1.1667, Acc: 0.3637
+  Val Loss:   1.1110, Acc: 0.3622 | subject macro-F1: 0.3710, balanced acc: 0.3741
+  (new best model)
+
+[Epoch 4/50]
+  Train Loss: 1.1614, Acc: 0.3758
+  Val Loss:   1.2637, Acc: 0.3013 | subject macro-F1: 0.3059, balanced acc: 0.3300
+
+[Epoch 5/50]
+  Train Loss: 1.1568, Acc: 0.3877
+  Val Loss:   1.1593, Acc: 0.3544 | subject macro-F1: 0.3194, balanced acc: 0.3813
+
+[Epoch 6/50]
+  Train Loss: 1.1492, Acc: 0.3898
+  Val Loss:   1.1015, Acc: 0.3850 | subject macro-F1: 0.4200, balanced acc: 0.4243
+  (new best model)
+
+[Epoch 7/50]
+  Train Loss: 1.1445, Acc: 0.3922
+  Val Loss:   1.2647, Acc: 0.2349 | subject macro-F1: 0.2503, balanced acc: 0.3884
+
+[Epoch 8/50]
+  Train Loss: 1.1459, Acc: 0.3935
+  Val Loss:   1.1801, Acc: 0.3142 | subject macro-F1: 0.2044, balanced acc: 0.2788
+
+[Epoch 9/50]
+  Train Loss: 1.1424, Acc: 0.3868
+  Val Loss:   1.1921, Acc: 0.3052 | subject macro-F1: 0.2543, balanced acc: 0.2608
+
+[Epoch 10/50]
+  Train Loss: 1.1391, Acc: 0.3883
+  Val Loss:   1.1342, Acc: 0.3214 | subject macro-F1: 0.2525, balanced acc: 0.2608
+
+[Epoch 11/50]
+  Train Loss: 1.1314, Acc: 0.4046
+  Val Loss:   1.2513, Acc: 0.2667 | subject macro-F1: 0.2310, balanced acc: 0.2798
+
+[Epoch 12/50]
+  Train Loss: 1.1391, Acc: 0.4003
+  Val Loss:   1.1209, Acc: 0.3744 | subject macro-F1: 0.4352, balanced acc: 0.5023
+  (new best model)
+
+[Epoch 13/50]
+  Train Loss: 1.1343, Acc: 0.3961
+  Val Loss:   1.0936, Acc: 0.3800 | subject macro-F1: 0.3361, balanced acc: 0.3416
+
+[Epoch 14/50]
+  Train Loss: 1.1289, Acc: 0.3985
+  Val Loss:   1.0742, Acc: 0.4330 | subject macro-F1: 0.3979, balanced acc: 0.4176
+
+[Epoch 15/50]
+  Train Loss: 1.1292, Acc: 0.4032
+  Val Loss:   1.1608, Acc: 0.3164 | subject macro-F1: 0.2867, balanced acc: 0.4061
+
+[Epoch 16/50]
+  Train Loss: 1.1287, Acc: 0.3924
+  Val Loss:   1.1789, Acc: 0.3371 | subject macro-F1: 0.3252, balanced acc: 0.3410
+
+[Epoch 17/50]
+  Train Loss: 1.1300, Acc: 0.4030
+  Val Loss:   1.1223, Acc: 0.4090 | subject macro-F1: 0.3503, balanced acc: 0.3586
+
+[Epoch 18/50]
+  Train Loss: 1.1235, Acc: 0.4142
+  Val Loss:   1.1120, Acc: 0.3438 | subject macro-F1: 0.2889, balanced acc: 0.2965
+
+[Epoch 19/50]
+  Train Loss: 1.1254, Acc: 0.4105
+  Val Loss:   1.1490, Acc: 0.3482 | subject macro-F1: 0.3039, balanced acc: 0.3633
+
+[Epoch 20/50]
+  Train Loss: 1.1168, Acc: 0.4200
+  Val Loss:   1.1961, Acc: 0.3365 | subject macro-F1: 0.2831, balanced acc: 0.3343
+
+[Epoch 21/50]
+  Train Loss: 1.1226, Acc: 0.4154
+  Val Loss:   1.1315, Acc: 0.3404 | subject macro-F1: 0.3154, balanced acc: 0.3187
+
+[Epoch 22/50]
+  Train Loss: 1.1185, Acc: 0.4174
+  Val Loss:   1.0996, Acc: 0.3672 | subject macro-F1: 0.3586, balanced acc: 0.3767
+
+Early stopping at epoch 22
+
+[Best model] Restored epoch 12 (subject-level val macro-F1 0.4352)
+
+======================================================================
+[OK] Training completed!
+======================================================================
+
+[Step 3b] Evaluating linear probe...
+
+[Evaluate] Making predictions on test set...
+
+[Evaluate] Aggregating predictions to subject level...
+[Evaluate] Evaluated 61 subjects
+
+[Step 4] Fine-tuning pretrained encoder...
+
+======================================================================
+FINE-TUNING (SimCLR-pretrained encoder)
+======================================================================
+  lr=0.0001, weight_decay=0.01, label_smoothing=0.1, selection = subject-level val macro-F1
+
+[Epoch 1/50]
+  Train Loss: 1.1647, Acc: 0.3299
+  Val Loss:   1.0968, Acc: 0.3454 | subject macro-F1: 0.2767, balanced acc: 0.3916
+  (new best model)
+
+[Epoch 2/50]
+  Train Loss: 1.0969, Acc: 0.4100
+  Val Loss:   1.1577, Acc: 0.3521 | subject macro-F1: 0.3369, balanced acc: 0.4505
+  (new best model)
+
+[Epoch 3/50]
+  Train Loss: 0.9969, Acc: 0.5141
+  Val Loss:   1.1509, Acc: 0.4258 | subject macro-F1: 0.3550, balanced acc: 0.4418
+  (new best model)
+
+[Epoch 4/50]
+  Train Loss: 0.8929, Acc: 0.6385
+  Val Loss:   1.2153, Acc: 0.4113 | subject macro-F1: 0.3618, balanced acc: 0.3664
+  (new best model)
+
+[Epoch 5/50]
+  Train Loss: 0.8070, Acc: 0.7162
+  Val Loss:   1.2086, Acc: 0.4576 | subject macro-F1: 0.4136, balanced acc: 0.4166
+  (new best model)
+
+[Epoch 6/50]
+  Train Loss: 0.7320, Acc: 0.7872
+  Val Loss:   1.2865, Acc: 0.4548 | subject macro-F1: 0.4149, balanced acc: 0.4192
+  (new best model)
+
+[Epoch 7/50]
+  Train Loss: 0.6737, Acc: 0.8410
+  Val Loss:   1.3719, Acc: 0.4676 | subject macro-F1: 0.4028, balanced acc: 0.4098
+
+[Epoch 8/50]
+  Train Loss: 0.6419, Acc: 0.8758
+  Val Loss:   1.4393, Acc: 0.4671 | subject macro-F1: 0.4041, balanced acc: 0.4098
+
+[Epoch 9/50]
+  Train Loss: 0.6065, Acc: 0.9022
+  Val Loss:   1.3994, Acc: 0.5006 | subject macro-F1: 0.4173, balanced acc: 0.4217
+  (new best model)
+
+[Epoch 10/50]
+  Train Loss: 0.5878, Acc: 0.9197
+  Val Loss:   1.4642, Acc: 0.4621 | subject macro-F1: 0.4041, balanced acc: 0.4098
+
+[Epoch 11/50]
+  Train Loss: 0.5700, Acc: 0.9351
+  Val Loss:   1.5153, Acc: 0.4593 | subject macro-F1: 0.4163, balanced acc: 0.4192
+
+[Epoch 12/50]
+  Train Loss: 0.5502, Acc: 0.9485
+  Val Loss:   1.5136, Acc: 0.4626 | subject macro-F1: 0.3777, balanced acc: 0.3834
+
+[Epoch 13/50]
+  Train Loss: 0.5467, Acc: 0.9486
+  Val Loss:   1.5831, Acc: 0.4464 | subject macro-F1: 0.3908, balanced acc: 0.3953
+
+[Epoch 14/50]
+  Train Loss: 0.5299, Acc: 0.9608
+  Val Loss:   1.5551, Acc: 0.4704 | subject macro-F1: 0.4249, balanced acc: 0.4285
+  (new best model)
+
+[Epoch 15/50]
+  Train Loss: 0.5226, Acc: 0.9660
+  Val Loss:   1.5890, Acc: 0.4598 | subject macro-F1: 0.4041, balanced acc: 0.4098
+
+[Epoch 16/50]
+  Train Loss: 0.5234, Acc: 0.9674
+  Val Loss:   1.4910, Acc: 0.4676 | subject macro-F1: 0.4003, balanced acc: 0.4047
+
+[Epoch 17/50]
+  Train Loss: 0.5130, Acc: 0.9713
+  Val Loss:   1.5357, Acc: 0.4799 | subject macro-F1: 0.3771, balanced acc: 0.3808
+
+[Epoch 18/50]
+  Train Loss: 0.5053, Acc: 0.9791
+  Val Loss:   1.5271, Acc: 0.4927 | subject macro-F1: 0.4062, balanced acc: 0.4072
+
+[Epoch 19/50]
+  Train Loss: 0.5039, Acc: 0.9763
+  Val Loss:   1.5594, Acc: 0.4581 | subject macro-F1: 0.3996, balanced acc: 0.4021
+
+[Epoch 20/50]
+  Train Loss: 0.5020, Acc: 0.9787
+  Val Loss:   1.5152, Acc: 0.4660 | subject macro-F1: 0.3944, balanced acc: 0.3995
+
+[Epoch 21/50]
+  Train Loss: 0.4980, Acc: 0.9828
+  Val Loss:   1.4551, Acc: 0.4900 | subject macro-F1: 0.4023, balanced acc: 0.4072
+
+[Epoch 22/50]
+  Train Loss: 0.4958, Acc: 0.9836
+  Val Loss:   1.5429, Acc: 0.4777 | subject macro-F1: 0.4127, balanced acc: 0.4166
+
+[Epoch 23/50]
+  Train Loss: 0.4970, Acc: 0.9830
+  Val Loss:   1.5472, Acc: 0.4788 | subject macro-F1: 0.4172, balanced acc: 0.4243
+
+[Epoch 24/50]
+  Train Loss: 0.4900, Acc: 0.9854
+  Val Loss:   1.4717, Acc: 0.4766 | subject macro-F1: 0.4041, balanced acc: 0.4098
+
+Early stopping at epoch 24
+
+[Best model] Restored epoch 14 (subject-level val macro-F1 0.4249)
+
+======================================================================
+[OK] Training completed!
+======================================================================
+
+[Step 4] Evaluating SSL model...
+
+[Evaluate] Making predictions on test set...
+
+[Evaluate] Aggregating predictions to subject level...
+[Evaluate] Evaluated 61 subjects
+
+[Step 5] Comparing supervised vs SSL (fine-tuned)...
+
+======================================================================
+MODEL COMPARISON: Supervised vs SSL
+======================================================================
+
+accuracy:
+  Supervised: 0.4918
+  SSL:        0.5246
+  Difference: +0.0328 ↑
+
+precision_macro:
+  Supervised: 0.4947
+  SSL:        0.4641
+  Difference: -0.0306 ↓
+
+recall_macro:
+  Supervised: 0.4511
+  SSL:        0.4267
+  Difference: -0.0244 ↓
+
+f1_macro:
+  Supervised: 0.4662
+  SSL:        0.4353
+  Difference: -0.0310 ↓
+
+======================================================================
+
+[Step 5] Comparing supervised vs SSL (linear probe)...
+
+======================================================================
+MODEL COMPARISON: Supervised vs SSL
+======================================================================
+
+accuracy:
+  Supervised: 0.4918
+  SSL:        0.2787
+  Difference: -0.2131 ↓
+
+precision_macro:
+  Supervised: 0.4947
+  SSL:        0.3159
+  Difference: -0.1788 ↓
+
+recall_macro:
+  Supervised: 0.4511
+  SSL:        0.2911
+  Difference: -0.1600 ↓
+
+f1_macro:
+  Supervised: 0.4662
+  SSL:        0.2623
+  Difference: -0.2039 ↓
+
+======================================================================
+
+[Saved] Run 2 results -> C:\Users\navya\ad-mri-ssl-research\outputs\results\runs\run_2_seed_44_adni_v3_f1select_reg_probe.json
+
+======================================================================
+EXPERIMENT STATISTICS
+======================================================================
+
+ACCURACY:
+  Supervised        0.4426 ± 0.0682
+  SSL fine-tuned    0.4344 ± 0.1250
+  SSL linear probe  0.3033 ± 0.0341
+  SSL fine-tuned - Supervised: -0.0082  (paired t-test p=0.8743, not significant)
+  SSL linear probe - Supervised: -0.1393  (paired t-test p=0.3100, not significant)
+
+PRECISION_MACRO:
+  Supervised        0.3946 ± 0.1387
+  SSL fine-tuned    0.3845 ± 0.1103
+  SSL linear probe  0.3097 ± 0.0085
+  SSL fine-tuned - Supervised: -0.0101  (paired t-test p=0.7100, not significant)
+  SSL linear probe - Supervised: -0.0848  (paired t-test p=0.5325, not significant)
+
+RECALL_MACRO:
+  Supervised        0.3700 ± 0.1124
+  SSL fine-tuned    0.3667 ± 0.0832
+  SSL linear probe  0.3078 ± 0.0231
+  SSL fine-tuned - Supervised: -0.0033  (paired t-test p=0.9003, not significant)
+  SSL linear probe - Supervised: -0.0622  (paired t-test p=0.6392, not significant)
+
+F1_MACRO:
+  Supervised        0.3789 ± 0.1210
+  SSL fine-tuned    0.3616 ± 0.1021
+  SSL linear probe  0.2790 ± 0.0231
+  SSL fine-tuned - Supervised: -0.0173  (paired t-test p=0.4244, not significant)
+  SSL linear probe - Supervised: -0.0999  (paired t-test p=0.5128, not significant)
+
+======================================================================
+
+[Results] Saved raw results to C:\Users\navya\ad-mri-ssl-research\outputs\results\experiment_results_adni_v3_f1select_reg_probe_20261018_132217.json
+[Results] Saved statistics to C:\Users\navya\ad-mri-ssl-research\outputs\results\statistics_adni_v3_f1select_reg_probe_20261018_132217.json
+
+======================================================================
+[OK] EXPERIMENT COMPLETED!
+======================================================================

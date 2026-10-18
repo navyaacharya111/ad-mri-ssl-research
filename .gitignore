@@ -1,0 +1,15 @@
+﻿venv/
+data/
+outputs/checkpoints/
+backup_before_*/
+__pycache__/
+*.pyc
+*.pt
+*.pth
+*.zip
+*.dcm
+*.nii
+*.nii.gz
+*.img
+*.hdr
+.ipynb_checkpoints/

@@ -1,0 +1,19 @@
+Method,Run,Test set,Accuracy,Balanced accuracy,Macro-F1,Macro ROC-AUC (OvR),CN-vs-AD ROC-AUC
+Supervised,Run 1 (seed 43),ADNI test,0.475,0.478,0.468,0.615,0.827
+Supervised,Run 1 (seed 43),OASIS-1,0.288,0.347,0.259,0.526,0.593
+Supervised,Run 2 (seed 44),ADNI test,0.557,0.502,0.515,0.687,0.847
+Supervised,Run 2 (seed 44),OASIS-1,0.369,0.379,0.354,0.528,0.634
+Supervised,Mean of 2 runs,ADNI test,0.516,0.490,0.491,0.651,0.837
+Supervised,Mean of 2 runs,OASIS-1,0.328,0.363,0.306,0.527,0.613
+SimCLR fine-tuned,Run 1 (seed 43),ADNI test,0.410,0.360,0.334,0.591,0.820
+SimCLR fine-tuned,Run 1 (seed 43),OASIS-1,0.162,0.343,0.109,0.550,0.791
+SimCLR fine-tuned,Run 2 (seed 44),ADNI test,0.508,0.416,0.425,0.574,0.680
+SimCLR fine-tuned,Run 2 (seed 44),OASIS-1,0.222,0.365,0.210,0.527,0.648
+SimCLR fine-tuned,Mean of 2 runs,ADNI test,0.459,0.388,0.379,0.582,0.750
+SimCLR fine-tuned,Mean of 2 runs,OASIS-1,0.192,0.354,0.159,0.539,0.720
+SimCLR linear probe,Run 1 (seed 43),ADNI test,0.410,0.478,0.402,0.661,0.927
+SimCLR linear probe,Run 1 (seed 43),OASIS-1,0.212,0.232,0.164,0.482,0.556
+SimCLR linear probe,Run 2 (seed 44),ADNI test,0.393,0.464,0.382,0.605,0.800
+SimCLR linear probe,Run 2 (seed 44),OASIS-1,0.157,0.332,0.104,0.524,0.554
+SimCLR linear probe,Mean of 2 runs,ADNI test,0.402,0.471,0.392,0.633,0.863
+SimCLR linear probe,Mean of 2 runs,OASIS-1,0.184,0.282,0.134,0.503,0.555

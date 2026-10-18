@@ -1,0 +1,37 @@
+Method,Run,Test set,Class,Precision,Recall,F1,True subjects,Predicted subjects
+Supervised,Run 1 (seed 43),ADNI test,CN,0.417,0.400,0.408,25,24
+Supervised,Run 1 (seed 43),ADNI test,MCI,0.533,0.533,0.533,30,30
+Supervised,Run 1 (seed 43),ADNI test,AD,0.429,0.500,0.462,6,7
+Supervised,Run 1 (seed 43),OASIS-1,CN,0.556,0.051,0.093,98,9
+Supervised,Run 1 (seed 43),OASIS-1,MCI,0.411,0.557,0.473,70,95
+Supervised,Run 1 (seed 43),OASIS-1,AD,0.138,0.433,0.210,30,94
+Supervised,Run 2 (seed 44),ADNI test,CN,0.552,0.640,0.593,25,29
+Supervised,Run 2 (seed 44),ADNI test,MCI,0.571,0.533,0.552,30,28
+Supervised,Run 2 (seed 44),ADNI test,AD,0.500,0.333,0.400,6,4
+Supervised,Run 2 (seed 44),OASIS-1,CN,0.559,0.337,0.420,98,59
+Supervised,Run 2 (seed 44),OASIS-1,MCI,0.359,0.400,0.378,70,78
+Supervised,Run 2 (seed 44),OASIS-1,AD,0.197,0.400,0.264,30,61
+SimCLR fine-tuned,Run 1 (seed 43),ADNI test,CN,0.515,0.680,0.586,25,33
+SimCLR fine-tuned,Run 1 (seed 43),ADNI test,MCI,0.438,0.233,0.304,30,16
+SimCLR fine-tuned,Run 1 (seed 43),ADNI test,AD,0.083,0.167,0.111,6,12
+SimCLR fine-tuned,Run 1 (seed 43),OASIS-1,CN,0.000,0.000,0.000,98,0
+SimCLR fine-tuned,Run 1 (seed 43),OASIS-1,MCI,0.182,0.029,0.049,70,11
+SimCLR fine-tuned,Run 1 (seed 43),OASIS-1,AD,0.160,1.000,0.276,30,187
+SimCLR fine-tuned,Run 2 (seed 44),ADNI test,CN,0.500,0.480,0.490,25,24
+SimCLR fine-tuned,Run 2 (seed 44),ADNI test,MCI,0.529,0.600,0.562,30,34
+SimCLR fine-tuned,Run 2 (seed 44),ADNI test,AD,0.333,0.167,0.222,6,3
+SimCLR fine-tuned,Run 2 (seed 44),OASIS-1,CN,0.700,0.071,0.130,98,10
+SimCLR fine-tuned,Run 2 (seed 44),OASIS-1,MCI,0.440,0.157,0.232,70,25
+SimCLR fine-tuned,Run 2 (seed 44),OASIS-1,AD,0.160,0.867,0.269,30,163
+SimCLR linear probe,Run 1 (seed 43),ADNI test,CN,0.476,0.400,0.435,25,21
+SimCLR linear probe,Run 1 (seed 43),ADNI test,MCI,0.458,0.367,0.407,30,24
+SimCLR linear probe,Run 1 (seed 43),ADNI test,AD,0.250,0.667,0.364,6,16
+SimCLR linear probe,Run 1 (seed 43),OASIS-1,CN,0.000,0.000,0.000,98,0
+SimCLR linear probe,Run 1 (seed 43),OASIS-1,MCI,0.330,0.529,0.407,70,112
+SimCLR linear probe,Run 1 (seed 43),OASIS-1,AD,0.058,0.167,0.086,30,86
+SimCLR linear probe,Run 2 (seed 44),ADNI test,CN,0.692,0.360,0.474,25,13
+SimCLR linear probe,Run 2 (seed 44),ADNI test,MCI,0.500,0.367,0.423,30,22
+SimCLR linear probe,Run 2 (seed 44),ADNI test,AD,0.154,0.667,0.250,6,26
+SimCLR linear probe,Run 2 (seed 44),OASIS-1,CN,0.000,0.000,0.000,98,0
+SimCLR linear probe,Run 2 (seed 44),OASIS-1,MCI,0.400,0.029,0.053,70,5
+SimCLR linear probe,Run 2 (seed 44),OASIS-1,AD,0.150,0.967,0.260,30,193

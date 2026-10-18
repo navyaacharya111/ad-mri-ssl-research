@@ -1,0 +1,777 @@
+
+======================================================================
+AD-MRI SSL RESEARCH EXPERIMENT
+======================================================================
+Log file: C:\Users\navya\ad-mri-ssl-research\outputs\logs\experiment_20261014_225127.log
+
+Research Question:
+Does self-supervised pretraining improve cross-dataset generalization
+of Alzheimer's disease MRI classification?
+
+======================================================================
+
+======================================================================
+STARTING EXPERIMENT SUITE
+======================================================================
+Number of runs: 2
+Dataset: adni
+Device: cpu
+Per-run results: C:\Users\navya\ad-mri-ssl-research\outputs\results\runs
+Checkpoints:     C:\Users\navya\ad-mri-ssl-research\outputs\checkpoints
+
+======================================================================
+RUN 1/2 (Seed: 43)
+======================================================================
+
+[Step 1] Loading dataset and creating splits...
+
+[Dataset] Initializing ADNI dataset...
+[Dataset] Labels: C:\Users\navya\ad-mri-ssl-research\data\raw\ADNI_diagnoses.csv
+[Dataset] Images: C:\Users\navya\ad-mri-ssl-research\data\raw\ADNI\ADNI
+[Dataset] Skipped 10 folders with no valid label, 1 with no 3D scan (fewer than 40 slices)
+[Dataset] Loaded 387 subjects  (CN=158, MCI=193, AD=36)
+
+[Splitter] Creating subject-level splits...
+[Splitter] Total subjects: 387
+[Splitter] Split ratios: train=0.7, val=0.15, test=0.15
+
+[Splitter] Split assignments:
+  Train: 270 subjects (69.8%)
+  Val:   56 subjects (14.5%)
+  Test:  61 subjects (15.8%)
+[Splitter] ✓ No leakage detected - splits are clean!
+
+[DataLoader] Creating PyTorch DataLoaders...
+
+[DataLoader] Creating train dataset with 270 subjects
+[DataLoader] Extracted 8640 slices from 270 subjects
+
+[DataLoader] Creating val dataset with 56 subjects
+[DataLoader] Extracted 1792 slices from 56 subjects
+
+[DataLoader] Creating test dataset with 61 subjects
+[DataLoader] Extracted 1952 slices from 61 subjects
+[DataLoader] Train loader: 540 batches
+[DataLoader] Val loader:   112 batches
+[DataLoader] Test loader:  122 batches
+[ClassWeights] Train subjects per class (CN, MCI, AD): [110, 135, 25]
+[ClassWeights] Loss weights (CN, MCI, AD): [0.818, 0.667, 3.6]
+
+[Step 2] Training supervised baseline...
+
+======================================================================
+SUPERVISED TRAINING (baseline)
+======================================================================
+
+[Epoch 1/50]
+  Train Loss: 0.6825, Acc: 0.6694
+  Val Loss:   1.8622, Acc: 0.4269
+  (new best model)
+
+[Epoch 2/50]
+  Train Loss: 0.3123, Acc: 0.8654
+  Val Loss:   2.0109, Acc: 0.4436
+
+[Epoch 3/50]
+  Train Loss: 0.1840, Acc: 0.9245
+  Val Loss:   2.7503, Acc: 0.4598
+
+[Epoch 4/50]
+  Train Loss: 0.1139, Acc: 0.9527
+  Val Loss:   2.8329, Acc: 0.4749
+
+[Epoch 5/50]
+  Train Loss: 0.0958, Acc: 0.9632
+  Val Loss:   2.8174, Acc: 0.4771
+
+[Epoch 6/50]
+  Train Loss: 0.0833, Acc: 0.9676
+  Val Loss:   2.8728, Acc: 0.4654
+
+[Epoch 7/50]
+  Train Loss: 0.0436, Acc: 0.9819
+  Val Loss:   3.3532, Acc: 0.4637
+
+[Epoch 8/50]
+  Train Loss: 0.0838, Acc: 0.9697
+  Val Loss:   3.1577, Acc: 0.4358
+
+[Epoch 9/50]
+  Train Loss: 0.0553, Acc: 0.9799
+  Val Loss:   3.7900, Acc: 0.4470
+
+[Epoch 10/50]
+  Train Loss: 0.0328, Acc: 0.9866
+  Val Loss:   3.6511, Acc: 0.4643
+
+[Epoch 11/50]
+  Train Loss: 0.0526, Acc: 0.9797
+  Val Loss:   3.0728, Acc: 0.4688
+
+Early stopping at epoch 11
+
+[Best model] Restored weights with lowest val loss (1.8622)
+
+======================================================================
+[OK] Training completed!
+======================================================================
+
+[Step 2] Evaluating supervised model...
+
+[Evaluate] Making predictions on test set...
+
+[Evaluate] Aggregating predictions to subject level...
+[Evaluate] Evaluated 61 subjects
+
+[Step 3] Training SSL (SimCLR pretraining)...
+
+======================================================================
+SELF-SUPERVISED PRETRAINING (SimCLR)
+======================================================================
+
+[Epoch 1/50]
+  Loss: 2.7970
+
+[Epoch 2/50]
+  Loss: 2.3519
+
+[Epoch 3/50]
+  Loss: 2.1613
+
+[Epoch 4/50]
+  Loss: 2.0635
+
+[Epoch 5/50]
+  Loss: 1.9921
+
+[Epoch 6/50]
+  Loss: 1.9351
+
+[Epoch 7/50]
+  Loss: 1.8869
+
+[Epoch 8/50]
+  Loss: 1.8405
+
+[Epoch 9/50]
+  Loss: 1.8082
+
+[Epoch 10/50]
+  Loss: 1.7886
+
+[Epoch 11/50]
+  Loss: 1.7701
+
+[Epoch 12/50]
+  Loss: 1.7492
+
+[Epoch 13/50]
+  Loss: 1.7349
+
+[Epoch 14/50]
+  Loss: 1.7251
+
+[Epoch 15/50]
+  Loss: 1.7094
+
+[Epoch 16/50]
+  Loss: 1.6991
+
+[Epoch 17/50]
+  Loss: 1.6946
+
+[Epoch 18/50]
+  Loss: 1.6876
+
+[Epoch 19/50]
+  Loss: 1.6743
+
+[Epoch 20/50]
+  Loss: 1.6705
+
+[Epoch 21/50]
+  Loss: 1.6699
+
+[Epoch 22/50]
+  Loss: 1.6586
+
+[Epoch 23/50]
+  Loss: 1.6590
+
+[Epoch 24/50]
+  Loss: 1.6560
+
+[Epoch 25/50]
+  Loss: 1.6495
+
+[Epoch 26/50]
+  Loss: 1.6451
+
+[Epoch 27/50]
+  Loss: 1.6410
+
+[Epoch 28/50]
+  Loss: 1.6389
+
+[Epoch 29/50]
+  Loss: 1.6391
+
+[Epoch 30/50]
+  Loss: 1.6334
+
+[Epoch 31/50]
+  Loss: 1.6322
+
+[Epoch 32/50]
+  Loss: 1.6279
+
+[Epoch 33/50]
+  Loss: 1.6273
+
+[Epoch 34/50]
+  Loss: 1.6221
+
+[Epoch 35/50]
+  Loss: 1.6213
+
+[Epoch 36/50]
+  Loss: 1.6188
+
+[Epoch 37/50]
+  Loss: 1.6135
+
+[Epoch 38/50]
+  Loss: 1.6154
+
+[Epoch 39/50]
+  Loss: 1.6109
+
+[Epoch 40/50]
+  Loss: 1.6166
+
+[Epoch 41/50]
+  Loss: 1.6144
+
+[Epoch 42/50]
+  Loss: 1.6085
+
+[Epoch 43/50]
+  Loss: 1.6060
+
+[Epoch 44/50]
+  Loss: 1.6052
+
+[Epoch 45/50]
+  Loss: 1.6041
+
+[Epoch 46/50]
+  Loss: 1.6002
+
+[Epoch 47/50]
+  Loss: 1.6010
+
+[Epoch 48/50]
+  Loss: 1.6040
+
+[Epoch 49/50]
+  Loss: 1.5975
+
+[Epoch 50/50]
+  Loss: 1.5968
+
+======================================================================
+[OK] Pretraining completed!
+======================================================================
+
+[Step 4] Fine-tuning pretrained encoder...
+
+======================================================================
+FINE-TUNING (SimCLR-pretrained encoder)
+======================================================================
+
+[Epoch 1/50]
+  Train Loss: 1.0119, Acc: 0.4853
+  Val Loss:   1.0770, Acc: 0.4280
+  (new best model)
+
+[Epoch 2/50]
+  Train Loss: 0.9276, Acc: 0.5184
+  Val Loss:   1.0998, Acc: 0.3845
+
+[Epoch 3/50]
+  Train Loss: 0.8327, Acc: 0.5524
+  Val Loss:   1.1421, Acc: 0.3917
+
+[Epoch 4/50]
+  Train Loss: 0.7203, Acc: 0.6314
+  Val Loss:   1.2362, Acc: 0.4408
+
+[Epoch 5/50]
+  Train Loss: 0.5656, Acc: 0.7123
+  Val Loss:   1.3503, Acc: 0.4542
+
+[Epoch 6/50]
+  Train Loss: 0.4706, Acc: 0.7560
+  Val Loss:   1.4285, Acc: 0.4777
+
+[Epoch 7/50]
+  Train Loss: 0.3904, Acc: 0.8024
+  Val Loss:   1.6241, Acc: 0.4621
+
+[Epoch 8/50]
+  Train Loss: 0.3227, Acc: 0.8412
+  Val Loss:   1.9247, Acc: 0.4604
+
+[Epoch 9/50]
+  Train Loss: 0.2785, Acc: 0.8715
+  Val Loss:   1.9771, Acc: 0.4766
+
+[Epoch 10/50]
+  Train Loss: 0.2295, Acc: 0.8876
+  Val Loss:   2.1258, Acc: 0.4782
+
+[Epoch 11/50]
+  Train Loss: 0.1959, Acc: 0.9073
+  Val Loss:   2.2786, Acc: 0.4637
+
+Early stopping at epoch 11
+
+[Best model] Restored weights with lowest val loss (1.0770)
+
+======================================================================
+[OK] Training completed!
+======================================================================
+
+[Step 4] Evaluating SSL model...
+
+[Evaluate] Making predictions on test set...
+
+[Evaluate] Aggregating predictions to subject level...
+[Evaluate] Evaluated 61 subjects
+
+[Step 5] Comparing supervised vs SSL...
+
+======================================================================
+MODEL COMPARISON: Supervised vs SSL
+======================================================================
+
+accuracy:
+  Supervised: 0.4098
+  SSL:        0.3770
+  Difference: -0.0328 ↓
+
+precision_macro:
+  Supervised: 0.2630
+  SSL:        0.2900
+  Difference: +0.0271 ↑
+
+recall_macro:
+  Supervised: 0.2844
+  SSL:        0.2844
+  Difference: +0.0000 =
+
+f1_macro:
+  Supervised: 0.2527
+  SSL:        0.2801
+  Difference: +0.0274 ↑
+
+======================================================================
+
+[Saved] Run 1 results -> C:\Users\navya\ad-mri-ssl-research\outputs\results\runs\run_1_seed_43_adni.json
+
+======================================================================
+RUN 2/2 (Seed: 44)
+======================================================================
+
+[Step 1] Loading dataset and creating splits...
+
+[Dataset] Initializing ADNI dataset...
+[Dataset] Labels: C:\Users\navya\ad-mri-ssl-research\data\raw\ADNI_diagnoses.csv
+[Dataset] Images: C:\Users\navya\ad-mri-ssl-research\data\raw\ADNI\ADNI
+[Dataset] Skipped 10 folders with no valid label, 1 with no 3D scan (fewer than 40 slices)
+[Dataset] Loaded 387 subjects  (CN=158, MCI=193, AD=36)
+
+[Splitter] Creating subject-level splits...
+[Splitter] Total subjects: 387
+[Splitter] Split ratios: train=0.7, val=0.15, test=0.15
+
+[Splitter] Split assignments:
+  Train: 270 subjects (69.8%)
+  Val:   56 subjects (14.5%)
+  Test:  61 subjects (15.8%)
+[Splitter] ✓ No leakage detected - splits are clean!
+
+[DataLoader] Creating PyTorch DataLoaders...
+
+[DataLoader] Creating train dataset with 270 subjects
+[DataLoader] Extracted 8640 slices from 270 subjects
+
+[DataLoader] Creating val dataset with 56 subjects
+[DataLoader] Extracted 1792 slices from 56 subjects
+
+[DataLoader] Creating test dataset with 61 subjects
+[DataLoader] Extracted 1952 slices from 61 subjects
+[DataLoader] Train loader: 540 batches
+[DataLoader] Val loader:   112 batches
+[DataLoader] Test loader:  122 batches
+[ClassWeights] Train subjects per class (CN, MCI, AD): [110, 135, 25]
+[ClassWeights] Loss weights (CN, MCI, AD): [0.818, 0.667, 3.6]
+
+[Step 2] Training supervised baseline...
+
+======================================================================
+SUPERVISED TRAINING (baseline)
+======================================================================
+
+[Epoch 1/50]
+  Train Loss: 0.8230, Acc: 0.5883
+  Val Loss:   1.2677, Acc: 0.4459
+  (new best model)
+
+[Epoch 2/50]
+  Train Loss: 0.3562, Acc: 0.8366
+  Val Loss:   1.7832, Acc: 0.5413
+
+[Epoch 3/50]
+  Train Loss: 0.2104, Acc: 0.9065
+  Val Loss:   1.6628, Acc: 0.5720
+
+[Epoch 4/50]
+  Train Loss: 0.1441, Acc: 0.9385
+  Val Loss:   2.0798, Acc: 0.5067
+
+[Epoch 5/50]
+  Train Loss: 0.0881, Acc: 0.9635
+  Val Loss:   2.2921, Acc: 0.4799
+
+[Epoch 6/50]
+  Train Loss: 0.0887, Acc: 0.9660
+  Val Loss:   2.5709, Acc: 0.5558
+
+[Epoch 7/50]
+  Train Loss: 0.0685, Acc: 0.9704
+  Val Loss:   2.8445, Acc: 0.5179
+
+[Epoch 8/50]
+  Train Loss: 0.0892, Acc: 0.9647
+  Val Loss:   2.2667, Acc: 0.5865
+
+[Epoch 9/50]
+  Train Loss: 0.0420, Acc: 0.9809
+  Val Loss:   2.8463, Acc: 0.5374
+
+[Epoch 10/50]
+  Train Loss: 0.0544, Acc: 0.9779
+  Val Loss:   2.3113, Acc: 0.5212
+
+[Epoch 11/50]
+  Train Loss: 0.0305, Acc: 0.9846
+  Val Loss:   3.8780, Acc: 0.5329
+
+Early stopping at epoch 11
+
+[Best model] Restored weights with lowest val loss (1.2677)
+
+======================================================================
+[OK] Training completed!
+======================================================================
+
+[Step 2] Evaluating supervised model...
+
+[Evaluate] Making predictions on test set...
+
+[Evaluate] Aggregating predictions to subject level...
+[Evaluate] Evaluated 61 subjects
+
+[Step 3] Training SSL (SimCLR pretraining)...
+
+======================================================================
+SELF-SUPERVISED PRETRAINING (SimCLR)
+======================================================================
+
+[Epoch 1/50]
+  Loss: 2.8096
+
+[Epoch 2/50]
+  Loss: 2.3368
+
+[Epoch 3/50]
+  Loss: 2.1627
+
+[Epoch 4/50]
+  Loss: 2.0447
+
+[Epoch 5/50]
+  Loss: 1.9803
+
+[Epoch 6/50]
+  Loss: 1.9382
+
+[Epoch 7/50]
+  Loss: 1.8992
+
+[Epoch 8/50]
+  Loss: 1.8526
+
+[Epoch 9/50]
+  Loss: 1.8206
+
+[Epoch 10/50]
+  Loss: 1.8006
+
+[Epoch 11/50]
+  Loss: 1.7728
+
+[Epoch 12/50]
+  Loss: 1.7532
+
+[Epoch 13/50]
+  Loss: 1.7357
+
+[Epoch 14/50]
+  Loss: 1.7249
+
+[Epoch 15/50]
+  Loss: 1.7092
+
+[Epoch 16/50]
+  Loss: 1.7068
+
+[Epoch 17/50]
+  Loss: 1.6878
+
+[Epoch 18/50]
+  Loss: 1.6815
+
+[Epoch 19/50]
+  Loss: 1.6744
+
+[Epoch 20/50]
+  Loss: 1.6675
+
+[Epoch 21/50]
+  Loss: 1.6613
+
+[Epoch 22/50]
+  Loss: 1.6554
+
+[Epoch 23/50]
+  Loss: 1.6485
+
+[Epoch 24/50]
+  Loss: 1.6453
+
+[Epoch 25/50]
+  Loss: 1.6468
+
+[Epoch 26/50]
+  Loss: 1.6423
+
+[Epoch 27/50]
+  Loss: 1.6379
+
+[Epoch 28/50]
+  Loss: 1.6349
+
+[Epoch 29/50]
+  Loss: 1.6309
+
+[Epoch 30/50]
+  Loss: 1.6314
+
+[Epoch 31/50]
+  Loss: 1.6262
+
+[Epoch 32/50]
+  Loss: 1.6225
+
+[Epoch 33/50]
+  Loss: 1.6263
+
+[Epoch 34/50]
+  Loss: 1.6212
+
+[Epoch 35/50]
+  Loss: 1.6191
+
+[Epoch 36/50]
+  Loss: 1.6164
+
+[Epoch 37/50]
+  Loss: 1.6157
+
+[Epoch 38/50]
+  Loss: 1.6090
+
+[Epoch 39/50]
+  Loss: 1.6092
+
+[Epoch 40/50]
+  Loss: 1.6114
+
+[Epoch 41/50]
+  Loss: 1.6077
+
+[Epoch 42/50]
+  Loss: 1.6049
+
+[Epoch 43/50]
+  Loss: 1.6079
+
+[Epoch 44/50]
+  Loss: 1.6017
+
+[Epoch 45/50]
+  Loss: 1.6022
+
+[Epoch 46/50]
+  Loss: 1.6021
+
+[Epoch 47/50]
+  Loss: 1.6015
+
+[Epoch 48/50]
+  Loss: 1.5992
+
+[Epoch 49/50]
+  Loss: 1.5958
+
+[Epoch 50/50]
+  Loss: 1.5974
+
+======================================================================
+[OK] Pretraining completed!
+======================================================================
+
+[Step 4] Fine-tuning pretrained encoder...
+
+======================================================================
+FINE-TUNING (SimCLR-pretrained encoder)
+======================================================================
+
+[Epoch 1/50]
+  Train Loss: 0.9853, Acc: 0.4742
+  Val Loss:   1.0620, Acc: 0.4191
+  (new best model)
+
+[Epoch 2/50]
+  Train Loss: 0.9011, Acc: 0.4959
+  Val Loss:   1.0803, Acc: 0.3990
+
+[Epoch 3/50]
+  Train Loss: 0.7999, Acc: 0.5322
+  Val Loss:   1.1437, Acc: 0.4146
+
+[Epoch 4/50]
+  Train Loss: 0.6974, Acc: 0.5953
+  Val Loss:   1.1207, Acc: 0.4615
+
+[Epoch 5/50]
+  Train Loss: 0.5705, Acc: 0.6737
+  Val Loss:   1.1830, Acc: 0.5050
+
+[Epoch 6/50]
+  Train Loss: 0.4742, Acc: 0.7181
+  Val Loss:   1.2962, Acc: 0.5089
+
+[Epoch 7/50]
+  Train Loss: 0.3924, Acc: 0.7749
+  Val Loss:   1.3287, Acc: 0.5636
+
+[Epoch 8/50]
+  Train Loss: 0.3354, Acc: 0.8177
+  Val Loss:   1.5502, Acc: 0.5257
+
+[Epoch 9/50]
+  Train Loss: 0.2774, Acc: 0.8609
+  Val Loss:   1.6198, Acc: 0.5156
+
+[Epoch 10/50]
+  Train Loss: 0.2185, Acc: 0.8953
+  Val Loss:   1.7183, Acc: 0.4950
+
+[Epoch 11/50]
+  Train Loss: 0.1700, Acc: 0.9204
+  Val Loss:   1.9748, Acc: 0.4671
+
+Early stopping at epoch 11
+
+[Best model] Restored weights with lowest val loss (1.0620)
+
+======================================================================
+[OK] Training completed!
+======================================================================
+
+[Step 4] Evaluating SSL model...
+
+[Evaluate] Making predictions on test set...
+
+[Evaluate] Aggregating predictions to subject level...
+[Evaluate] Evaluated 61 subjects
+
+[Step 5] Comparing supervised vs SSL...
+
+======================================================================
+MODEL COMPARISON: Supervised vs SSL
+======================================================================
+
+accuracy:
+  Supervised: 0.4426
+  SSL:        0.3607
+  Difference: -0.0820 ↓
+
+precision_macro:
+  Supervised: 0.3667
+  SSL:        0.3393
+  Difference: -0.0274 ↓
+
+recall_macro:
+  Supervised: 0.3622
+  SSL:        0.4111
+  Difference: +0.0489 ↑
+
+f1_macro:
+  Supervised: 0.3562
+  SSL:        0.3447
+  Difference: -0.0114 ↓
+
+======================================================================
+
+[Saved] Run 2 results -> C:\Users\navya\ad-mri-ssl-research\outputs\results\runs\run_2_seed_44_adni.json
+
+======================================================================
+EXPERIMENT STATISTICS
+======================================================================
+
+ACCURACY:
+  Supervised: 0.4262 ± 0.0227
+  SSL:        0.3689 ± 0.0114
+  Improvement: -0.0574 (-13.46%)
+  Paired t-test: t=-2.333, p=0.2578 Not significant (p >= 0.05)
+
+PRECISION_MACRO:
+  Supervised: 0.3148 ± 0.0719
+  SSL:        0.3147 ± 0.0341
+  Improvement: -0.0001 (-0.04%)
+  Paired t-test: t=-0.005, p=0.9968 Not significant (p >= 0.05)
+
+RECALL_MACRO:
+  Supervised: 0.3233 ± 0.0539
+  SSL:        0.3478 ± 0.0878
+  Improvement: +0.0244 (+7.56%)
+  Paired t-test: t=1.000, p=0.5000 Not significant (p >= 0.05)
+
+F1_MACRO:
+  Supervised: 0.3044 ± 0.0717
+  SSL:        0.3124 ± 0.0448
+  Improvement: +0.0080 (+2.63%)
+  Paired t-test: t=0.413, p=0.7508 Not significant (p >= 0.05)
+
+======================================================================
+
+[Results] Saved raw results to C:\Users\navya\ad-mri-ssl-research\outputs\results\experiment_results_adni_20261015_223828.json
+[Results] Saved statistics to C:\Users\navya\ad-mri-ssl-research\outputs\results\statistics_adni_20261015_223828.json
+
+======================================================================
+[OK] EXPERIMENT COMPLETED!
+======================================================================

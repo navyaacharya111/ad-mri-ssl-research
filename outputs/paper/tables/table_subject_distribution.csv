@@ -1,0 +1,8 @@
+Cohort / split,Run,CN,MCI (OASIS: CDR 0.5),AD,Total
+ADNI train,Run 1 (seed 43),110,135,25,270
+ADNI val,Run 1 (seed 43),23,28,5,56
+ADNI test,Run 1 (seed 43),25,30,6,61
+ADNI train,Run 2 (seed 44),110,135,25,270
+ADNI val,Run 2 (seed 44),23,28,5,56
+ADNI test,Run 2 (seed 44),25,30,6,61
+OASIS-1 (external test),all runs,98,70,30,198

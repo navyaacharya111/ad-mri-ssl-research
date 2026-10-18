@@ -1,0 +1,10 @@
+Method,Run,Accuracy gap (pp),Balanced-accuracy gap (pp),Macro-F1 gap (pp),Macro-AUC gap,CN-vs-AD AUC gap
+Supervised,Run 1 (seed 43),+18.8,+13.1,+20.9,+0.088,+0.234
+Supervised,Run 2 (seed 44),+18.9,+12.3,+16.1,+0.159,+0.212
+Supervised,Mean of 2 runs,+18.8,+12.7,+18.5,+0.124,+0.223
+SimCLR fine-tuned,Run 1 (seed 43),+24.8,+1.7,+22.5,+0.040,+0.029
+SimCLR fine-tuned,Run 2 (seed 44),+28.6,+5.0,+21.5,+0.047,+0.032
+SimCLR fine-tuned,Mean of 2 runs,+26.7,+3.4,+22.0,+0.043,+0.030
+SimCLR linear probe,Run 1 (seed 43),+19.8,+24.6,+23.8,+0.179,+0.370
+SimCLR linear probe,Run 2 (seed 44),+23.7,+13.3,+27.8,+0.081,+0.246
+SimCLR linear probe,Mean of 2 runs,+21.7,+18.9,+25.8,+0.130,+0.308

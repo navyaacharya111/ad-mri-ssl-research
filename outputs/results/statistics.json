@@ -1,0 +1,112 @@
+{
+  "supervised": {
+    "accuracy": {
+      "mean": 0.3333333333333333,
+      "std": 0.0,
+      "ci": 0.0,
+      "values": [
+        0.3333333333333333,
+        0.3333333333333333
+      ]
+    },
+    "precision_macro": {
+      "mean": 0.1111111111111111,
+      "std": 0.0,
+      "ci": 0.0,
+      "values": [
+        0.1111111111111111,
+        0.1111111111111111
+      ]
+    },
+    "recall_macro": {
+      "mean": 0.3333333333333333,
+      "std": 0.0,
+      "ci": 0.0,
+      "values": [
+        0.3333333333333333,
+        0.3333333333333333
+      ]
+    },
+    "f1_macro": {
+      "mean": 0.16666666666666666,
+      "std": 0.0,
+      "ci": 0.0,
+      "values": [
+        0.16666666666666666,
+        0.16666666666666666
+      ]
+    }
+  },
+  "ssl": {
+    "accuracy": {
+      "mean": 0.3333333333333333,
+      "std": 0.0,
+      "ci": 0.0,
+      "values": [
+        0.3333333333333333,
+        0.3333333333333333
+      ]
+    },
+    "precision_macro": {
+      "mean": 0.1111111111111111,
+      "std": 0.0,
+      "ci": 0.0,
+      "values": [
+        0.1111111111111111,
+        0.1111111111111111
+      ]
+    },
+    "recall_macro": {
+      "mean": 0.3333333333333333,
+      "std": 0.0,
+      "ci": 0.0,
+      "values": [
+        0.3333333333333333,
+        0.3333333333333333
+      ]
+    },
+    "f1_macro": {
+      "mean": 0.16666666666666666,
+      "std": 0.0,
+      "ci": 0.0,
+      "values": [
+        0.16666666666666666,
+        0.16666666666666666
+      ]
+    }
+  },
+  "comparison": {
+    "accuracy": {
+      "supervised_mean": 0.3333333333333333,
+      "ssl_mean": 0.3333333333333333,
+      "improvement": 0.0,
+      "improvement_percent": 0.0,
+      "t_statistic": NaN,
+      "p_value": NaN
+    },
+    "precision_macro": {
+      "supervised_mean": 0.1111111111111111,
+      "ssl_mean": 0.1111111111111111,
+      "improvement": 0.0,
+      "improvement_percent": 0.0,
+      "t_statistic": NaN,
+      "p_value": NaN
+    },
+    "recall_macro": {
+      "supervised_mean": 0.3333333333333333,
+      "ssl_mean": 0.3333333333333333,
+      "improvement": 0.0,
+      "improvement_percent": 0.0,
+      "t_statistic": NaN,
+      "p_value": NaN
+    },
+    "f1_macro": {
+      "supervised_mean": 0.16666666666666666,
+      "ssl_mean": 0.16666666666666666,
+      "improvement": 0.0,
+      "improvement_percent": 0.0,
+      "t_statistic": NaN,
+      "p_value": NaN
+    }
+  }
+}

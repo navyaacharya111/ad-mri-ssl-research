@@ -1,0 +1,19 @@
+Version,Run,Comparison,Metric,Difference,CI 2.5%,CI 97.5%,p (bootstrap)
+v3,Run 1 (seed 43),ssl - supervised,roc_auc_cn_vs_ad,+0.199,+0.092,+0.309,0.001
+v3,Run 1 (seed 43),ssl - supervised,roc_auc_macro_ovr,+0.024,-0.041,+0.091,0.474
+v3,Run 1 (seed 43),ssl - supervised,f1_macro,-0.150,-0.206,-0.091,0.000
+v3,Run 1 (seed 43),linear probe - supervised,roc_auc_cn_vs_ad,-0.036,-0.199,+0.135,0.660
+v3,Run 1 (seed 43),linear probe - supervised,roc_auc_macro_ovr,-0.044,-0.124,+0.036,0.281
+v3,Run 1 (seed 43),linear probe - supervised,f1_macro,-0.094,-0.155,-0.037,0.000
+v3,Run 2 (seed 44),ssl - supervised,roc_auc_cn_vs_ad,+0.013,-0.098,+0.126,0.790
+v3,Run 2 (seed 44),ssl - supervised,roc_auc_macro_ovr,-0.001,-0.064,+0.062,0.992
+v3,Run 2 (seed 44),ssl - supervised,f1_macro,-0.144,-0.221,-0.064,0.000
+v3,Run 2 (seed 44),linear probe - supervised,roc_auc_cn_vs_ad,-0.080,-0.238,+0.077,0.305
+v3,Run 2 (seed 44),linear probe - supervised,roc_auc_macro_ovr,-0.004,-0.089,+0.080,0.923
+v3,Run 2 (seed 44),linear probe - supervised,f1_macro,-0.250,-0.321,-0.174,0.000
+v2,Run 1 (seed 43),ssl - supervised,roc_auc_cn_vs_ad,+0.048,-0.108,+0.192,0.543
+v2,Run 1 (seed 43),ssl - supervised,roc_auc_macro_ovr,+0.047,-0.036,+0.130,0.214
+v2,Run 1 (seed 43),ssl - supervised,f1_macro,-0.071,-0.137,-0.012,0.022
+v2,Run 2 (seed 44),ssl - supervised,roc_auc_cn_vs_ad,+0.193,+0.065,+0.314,0.002
+v2,Run 2 (seed 44),ssl - supervised,roc_auc_macro_ovr,+0.111,+0.036,+0.181,0.006
+v2,Run 2 (seed 44),ssl - supervised,f1_macro,-0.150,-0.220,-0.076,0.000

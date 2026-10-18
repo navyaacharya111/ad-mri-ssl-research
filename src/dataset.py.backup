@@ -1,0 +1,238 @@
+"""
+Dataset Module: Load MRI data while tracking subjects
+
+CRITICAL: This module ensures each MRI slice remembers which subject it came from.
+This is how we prevent data leakage (where the same patient appears in train AND test).
+"""
+import sys
+from pathlib import Path
+sys.path.insert(0, str(Path(__file__).parent.parent))
+import numpy as np
+from pathlib import Path
+import nibabel as nib
+from typing import Tuple, List, Dict
+import config
+
+
+class MRIDataset:
+    """
+    Load MRI data while preserving subject identity.
+    
+    Key principle: Each subject is ONE unit.
+    All slices from Subject #001 stay together.
+    """
+    
+    def __init__(self, dataset_type: str = "mock", data_dir: Path = None):
+        """
+        Initialize dataset loader.
+        
+        Args:
+            dataset_type: "mock" (synthetic for testing) or "adni" or "oasis" (real data)
+            data_dir: Where the data is stored
+        """
+        self.dataset_type = dataset_type
+        self.data_dir = data_dir or config.RAW_DATA_DIR
+        self.subjects = []  # List of subject metadata
+        
+        print(f"\n[Dataset] Initializing {dataset_type.upper()} dataset...")
+        print(f"[Dataset] Data directory: {self.data_dir}")
+        
+        if dataset_type == "mock":
+            self._load_mock_dataset()
+        else:
+            self._load_real_dataset()
+        
+        print(f"[Dataset] Loaded {len(self.subjects)} subjects")
+    
+    def _load_mock_dataset(self):
+        """
+        Load synthetic/mock MRI data for testing.
+        This creates fake data so we can test the pipeline without real ADNI/OASIS.
+        """
+        print("[Dataset] Creating synthetic mock data...")
+        
+        # Create mock subjects
+        # CN = Cognitively Normal (healthy)
+        # MCI = Mild Cognitive Impairment
+        # AD = Alzheimer's Disease
+        
+        for diagnosis, label in [("CN", 0), ("MCI", 1), ("AD", 2)]:
+            for subject_idx in range(1, 4):  # 3 subjects per class (9 total for testing)
+                subject_id = f"MOCK_{diagnosis}_{subject_idx:03d}"
+                
+                # Create a fake 3D MRI volume (120, 160, 100 slices)
+                # In real data, this would be loaded from a .nii.gz file
+                volume = np.random.randn(120, 160, 100).astype(np.float32)
+                
+                self.subjects.append({
+                    "subject_id": subject_id,
+                    "diagnosis": diagnosis,
+                    "label": label,
+                    "volume": volume,  # Mock: store in memory
+                    "filepath": None,  # Mock: no file
+                })
+        
+        print(f"[Dataset] Created {len(self.subjects)} mock subjects")
+    
+    def _load_real_dataset(self):
+        """
+        Load real MRI data from ADNI or OASIS.
+        
+        Expected directory structure:
+        data/raw/adni/
+            CN/
+                subject_001/T1.nii.gz
+                subject_002/T1.nii.gz
+            MCI/
+                ...
+            AD/
+                ...
+        """
+        print(f"[Dataset] Scanning for {self.dataset_type.upper()} files...")
+        
+        for diagnosis_label, diagnosis_name in [("CN", "CN"), ("MCI", "MCI"), ("AD", "AD")]:
+            diagnosis_dir = self.data_dir / diagnosis_label
+            
+            if not diagnosis_dir.exists():
+                print(f"[Dataset] Warning: {diagnosis_dir} not found")
+                continue
+            
+            # Find all .nii.gz files in this diagnosis folder
+            nifti_files = list(diagnosis_dir.glob("**/T1.nii.gz"))
+            
+            for filepath in nifti_files:
+                # Extract subject ID from path
+                # Example: data/raw/adni/CN/subject_001/T1.nii.gz → subject_001
+                subject_id = filepath.parent.name
+                
+                self.subjects.append({
+                    "subject_id": subject_id,
+                    "diagnosis": diagnosis_name,
+                    "label": list(config.CLASS_NAMES.values()).index(diagnosis_name),
+                    "filepath": filepath,
+                    "volume": None,  # Load on demand (saves memory)
+                })
+    
+    def __len__(self) -> int:
+        """Return total number of subjects."""
+        return len(self.subjects)
+    
+    def get_subject_ids(self) -> List[str]:
+        """Return list of all subject IDs."""
+        return [s["subject_id"] for s in self.subjects]
+    
+    def load_subject(self, subject_id: str) -> Tuple[np.ndarray, str, str]:
+        """
+        Load a single subject's MRI volume.
+        
+        Args:
+            subject_id: Subject identifier
+        
+        Returns:
+            (volume, diagnosis, subject_id)
+            volume: 3D numpy array of shape (H, W, D)
+            diagnosis: "CN", "MCI", or "AD"
+            subject_id: The subject identifier
+        """
+        # Find subject metadata
+        subject = None
+        for s in self.subjects:
+            if s["subject_id"] == subject_id:
+                subject = s
+                break
+        
+        if subject is None:
+            raise ValueError(f"Subject {subject_id} not found")
+        
+        # Load volume
+        if subject["volume"] is not None:
+            # Mock data: already in memory
+            volume = subject["volume"]
+        else:
+            # Real data: load from file
+            filepath = subject["filepath"]
+            print(f"[Dataset] Loading {subject_id} from {filepath}")
+            nifti_img = nib.load(filepath)
+            volume = np.array(nifti_img.dataobj, dtype=np.float32)
+        
+        return volume, subject["diagnosis"], subject_id
+    
+    def get_subject_info(self, subject_id: str) -> Dict:
+        """Get metadata for a subject (diagnosis, label, filepath)."""
+        for s in self.subjects:
+            if s["subject_id"] == subject_id:
+                return s
+        raise ValueError(f"Subject {subject_id} not found")
+
+
+def extract_2d_slices(volume_3d: np.ndarray, target_size: int = None) -> List[np.ndarray]:
+    """
+    Extract 2D slices from a 3D MRI volume.
+    
+    A 3D MRI is like a stack of 2D photographs. We extract individual slices.
+    
+    Args:
+        volume_3d: 3D numpy array of shape (height, width, depth)
+        target_size: Resize each slice to (target_size, target_size). If None, don't resize.
+    
+    Returns:
+        List of 2D slices (each is a 2D numpy array)
+    """
+    slices = []
+    
+    # Extract all slices along the Z axis (depth)
+    # Each slice is a 2D cross-section of the brain
+    num_slices = volume_3d.shape[2]
+    
+    for z in range(num_slices):
+        slice_2d = volume_3d[:, :, z]  # Extract 2D slice
+        
+        # Normalize intensity
+        if slice_2d.max() > slice_2d.min():
+            slice_2d = (slice_2d - slice_2d.min()) / (slice_2d.max() - slice_2d.min())
+        
+        # Resize if requested
+        if target_size is not None:
+            from skimage.transform import resize
+            slice_2d = resize(slice_2d, (target_size, target_size), mode='constant')
+        
+        slices.append(slice_2d.astype(np.float32))
+    
+    return slices
+
+
+# ============================================================================
+# TEST THE DATASET MODULE
+# ============================================================================
+
+if __name__ == "__main__":
+    print("\n" + "=" * 70)
+    print("TESTING DATASET MODULE")
+    print("=" * 70)
+    
+    # Create a mock dataset
+    dataset = MRIDataset(dataset_type="mock")
+    
+    # Show what we loaded
+    print(f"\nDataset contains {len(dataset)} subjects")
+    
+    # Load one subject
+    subject_ids = dataset.get_subject_ids()
+    print(f"\nSubject IDs: {subject_ids[:3]}...")  # Show first 3
+    
+    # Load the first subject
+    first_subject_id = subject_ids[0]
+    volume, diagnosis, subject_id = dataset.load_subject(first_subject_id)
+    
+    print(f"\nLoaded subject: {subject_id}")
+    print(f"Diagnosis: {diagnosis}")
+    print(f"Volume shape: {volume.shape}")  # Should be (120, 160, 100)
+    
+    # Extract 2D slices
+    slices = extract_2d_slices(volume, target_size=config.MRI_SIZE)
+    print(f"Extracted {len(slices)} 2D slices")
+    print(f"Each slice shape: {slices[0].shape}")  # Should be (128, 128)
+    
+    print("\n" + "=" * 70)
+    print("✓ Dataset module working correctly!")
+    print("=" * 70)
