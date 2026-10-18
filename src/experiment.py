@@ -50,7 +50,12 @@ from evaluate import Evaluator, compare_models
 RUNS_DIR = config.RESULTS_DIR / "runs"
 LOGS_DIR = config.OUTPUTS_DIR / "logs"
 # Change this whenever the method changes, so earlier runs are never reused on resume.
-EXPERIMENT_VERSION = "v3_f1select_reg_probe"
+# v4: same training settings as v3, new data - 250 subjects per class, scanner-matched,
+# first-visit scans (SELECTION_FILE), 5 runs instead of 2.
+EXPERIMENT_VERSION = "v4_balanced250"
+# Subjects, labels and scan dates used for ADNI: the CSV written by
+# tools/select_balanced_subjects.py --per-class 250, copied to this name.
+SELECTION_FILE = config.RAW_DATA_DIR / "ADNI_selection_v4.csv"
 
 # v3 training settings (override config.py where they differ; all are written to each run file).
 # Changes vs v2: best epoch chosen by subject-level validation macro-F1 instead of
@@ -184,7 +189,7 @@ class ExperimentRunner:
 
         # ===== STEP 1: Load data and create splits =====
         print("\n[Step 1] Loading dataset and creating splits...")
-        dataset = MRIDataset(dataset_type=self.dataset_type)
+        dataset = MRIDataset(dataset_type=self.dataset_type, selection_file=SELECTION_FILE)
         splitter = SubjectSplitter(dataset, random_state=random_seed)
         train_loader, val_loader, test_loader = create_dataloaders(dataset, splitter, batch_size=16)
         class_weights = self._class_weights(dataset, splitter)
@@ -195,6 +200,7 @@ class ExperimentRunner:
             "dataset_type": self.dataset_type,
             "experiment_version": EXPERIMENT_VERSION,
             "settings": V3_SETTINGS,
+            "selection_file": str(SELECTION_FILE) if self.dataset_type == "adni" else None,
             "class_weights": class_weights.tolist(),
             "split_sizes": {s: len(splitter.get_split_subjects(s)) for s in ("train", "val", "test")},
         }
@@ -412,7 +418,7 @@ if __name__ == "__main__":
     print("of Alzheimer's disease MRI classification?")
     print("\n" + "=" * 70)
 
-    runner = ExperimentRunner(num_runs=2, dataset_type="adni")  # 2 runs
+    runner = ExperimentRunner(num_runs=5, dataset_type="adni")  # 5 runs (seeds 43-47)
     runner.run_all_experiments()
     runner.save_results()
 

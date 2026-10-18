@@ -9,6 +9,11 @@ Interface used by the rest of the pipeline:
 ADNI layout:  data/raw/ADNI/ADNI/<SUBJECT_ID>/<SERIES>/<DATE>/<IMAGE_ID>/*.dcm
 Labels:       data/raw/ADNI_diagnoses.csv  (columns: SUBJECT_ID, DIAGNOSIS in {CN, MCI, AD})
 
+Subject selection (v4): MRIDataset("adni", selection_file=...) uses only the subjects
+in that file (written by tools/select_balanced_subjects.py; columns Subject ID, Class,
+Study Date), with its label, and takes each subject's scan from the listed study date.
+Without selection_file: every subject folder + ADNI_diagnoses.csv (v1-v3 behaviour).
+
 Slice selection (v2): ADNI MPRAGE scans are sagittal, so the middle slices show
 only the brain midline. extract_2d_slices() therefore takes half of the slices
 from each hemisphere, LATERAL_RANGE_MM (default 20-38 mm) either side of the
@@ -16,6 +21,7 @@ detected midline - the region containing the hippocampi. Volumes are resampled
 to 1 mm along the slice axis first, so the mm range is the same for every scan.
 """
 
+import re
 import sys
 from collections import Counter
 from pathlib import Path
@@ -96,9 +102,10 @@ def extract_2d_slices(volume_3d: np.ndarray, target_size: int = None,
 class MRIDataset:
     """Index of subjects; volumes are read from disk only when load_subject() is called."""
 
-    def __init__(self, dataset_type: str = "adni", data_dir: Path = None):
+    def __init__(self, dataset_type: str = "adni", data_dir: Path = None, selection_file: Path = None):
         self.dataset_type = dataset_type
         self.data_dir = Path(data_dir) if data_dir else Path(getattr(config, "RAW_DATA_DIR", "data/raw"))
+        self.selection_file = Path(selection_file) if selection_file else None
         self.subjects: Dict[str, Dict] = {}
 
         print(f"\n[Dataset] Initializing {dataset_type.upper()} dataset...")
@@ -123,11 +130,14 @@ class MRIDataset:
         except Exception:
             return 0
 
-    def _find_dicom_dir(self, subject_folder: Path):
+    def _find_dicom_dir(self, subject_folder: Path, scan_date: str = None):
         """
-        Return the folder holding this subject's 3D scan: among all folders that
-        contain .dcm files, prefer MPRAGE-type series, then the most slices.
+        Return (folder, date_matched) for this subject's 3D scan: among all folders
+        that contain .dcm files, prefer MPRAGE-type series, then the most slices.
         Folders with fewer than MIN_SLICES slices (localizers etc.) are ignored.
+        If scan_date (YYYY-MM-DD) is given, only folders under a <DATE> folder of
+        that day are considered; if there are none, the earliest date on disk is
+        used instead and date_matched is False.
         """
         counts = Counter(f.parent for f in subject_folder.rglob("*.dcm"))
         candidates = []
@@ -136,16 +146,29 @@ class MRIDataset:
             if n_files < MIN_SLICES:  # could be one multi-frame file holding the whole volume
                 n_slices = sum(self._num_frames(f) for f in folder.glob("*.dcm"))
             if n_slices >= MIN_SLICES:
-                is_rage = "RAGE" in str(folder.relative_to(subject_folder)).upper()
-                candidates.append((is_rage, n_slices, folder))
+                rel = folder.relative_to(subject_folder)
+                is_rage = "RAGE" in str(rel).upper()
+                dates = [p[:10] for p in rel.parts if re.match(r"\d{4}-\d{2}-\d{2}", p)]
+                candidates.append((is_rage, n_slices, folder, dates[0] if dates else ""))
         if not candidates:
-            return None
+            return None, False
+        matched = True
+        if scan_date:
+            same_day = [c for c in candidates if c[3] == scan_date]
+            if not same_day:
+                matched = False
+                earliest = min(c[3] for c in candidates)
+                same_day = [c for c in candidates if c[3] == earliest]
+            candidates = same_day
         candidates.sort(key=lambda t: (t[0], t[1]), reverse=True)
-        return candidates[0][2]
+        return candidates[0][2], matched
 
     def _load_real_dataset(self):
         labels_file = self.data_dir / "ADNI_diagnoses.csv"
         adni_root = self.data_dir / "ADNI" / "ADNI"
+        if self.selection_file is not None:
+            self._load_selected_subjects(self.selection_file, adni_root, labels_file)
+            return
         print(f"[Dataset] Labels: {labels_file}")
         print(f"[Dataset] Images: {adni_root}")
 
@@ -164,7 +187,7 @@ class MRIDataset:
             if diagnosis not in LABEL_MAP:
                 no_label += 1
                 continue
-            dicom_dir = self._find_dicom_dir(folder)
+            dicom_dir, _ = self._find_dicom_dir(folder)
             if dicom_dir is None:
                 no_dicom += 1
                 continue
@@ -178,6 +201,59 @@ class MRIDataset:
         if no_label or no_dicom:
             print(f"[Dataset] Skipped {no_label} folders with no valid label, "
                   f"{no_dicom} with no 3D scan (fewer than {MIN_SLICES} slices)")
+
+    def _load_selected_subjects(self, selection_file: Path, adni_root: Path, labels_file: Path):
+        """v4: use only the subjects, labels and scan dates listed in selection_file."""
+        print(f"[Dataset] Subject selection: {selection_file}")
+        print(f"[Dataset] Images: {adni_root}")
+        if not selection_file.exists():
+            raise FileNotFoundError(
+                f"Subject selection file not found: {selection_file}. Copy the CSV written by "
+                f"tools/select_balanced_subjects.py to this name.")
+
+        sel = pd.read_csv(selection_file)
+        old_labels = {}
+        if labels_file.exists():  # only used to report disagreements
+            df = pd.read_csv(labels_file)
+            old_labels = {str(s).strip(): str(d).strip().upper()
+                          for s, d in zip(df["SUBJECT_ID"], df["DIAGNOSIS"])}
+
+        not_on_disk, no_dicom, other_date, disagree = [], [], [], []
+        for _, row in sel.iterrows():
+            sid = str(row["Subject ID"]).strip()
+            diagnosis = str(row["Class"]).strip().upper()
+            if diagnosis not in LABEL_MAP:
+                raise ValueError(f"Unknown class '{diagnosis}' for {sid} in {selection_file}")
+            folder = adni_root / sid
+            if not folder.is_dir():
+                not_on_disk.append(sid)
+                continue
+            scan_date = pd.to_datetime(row["Study Date"], format="%m/%d/%Y").strftime("%Y-%m-%d")
+            dicom_dir, matched = self._find_dicom_dir(folder, scan_date)
+            if dicom_dir is None:
+                no_dicom.append(sid)
+                continue
+            if not matched:
+                other_date.append(sid)
+            if sid in old_labels and old_labels[sid] != diagnosis:
+                disagree.append(f"{sid} ({old_labels[sid]} -> {diagnosis})")
+            self.subjects[sid] = {
+                "subject_id": sid,
+                "diagnosis": diagnosis,
+                "label": LABEL_MAP[diagnosis],
+                "path": str(dicom_dir),
+                "dataset": "ADNI",
+                "scan_date": scan_date,
+                "scan_date_matched": matched,
+            }
+
+        print(f"[Dataset] Selection lists {len(sel)} subjects")
+        for msg, ids in (("not on disk (skipped)", not_on_disk),
+                         (f"with no 3D scan of at least {MIN_SLICES} slices (skipped)", no_dicom),
+                         ("without a scan on the selected date (earliest scan on disk used)", other_date),
+                         ("with a different label in ADNI_diagnoses.csv (selection label used)", disagree)):
+            if ids:
+                print(f"[Dataset] {len(ids)} {msg}: {', '.join(ids[:10])}{' ...' if len(ids) > 10 else ''}")
 
     def _read_dicom_volume(self, dicom_dir: Path) -> np.ndarray:
         import pydicom
