@@ -6,6 +6,38 @@ language and give step-by-step instructions when asking them to do something.
 
 ---
 
+## 0. CURRENT STATE (updated 19 Oct 2026) — read this first; it overrides older statements below
+
+- **v3 is finished** (2 runs, seeds 43/44) and **OASIS-1 has been obtained and evaluated**
+  (198 subjects aged >= 60: CN 98 / MCI 70 / AD 30; mapping CDR 0 -> CN, 0.5 -> MCI, >= 1 -> AD).
+  Statements in §1, §8 and §9 that say OASIS is missing or v3 is only prepared are outdated.
+- **Use the "corrected" evaluations** (`outputs/results/evaluation_corrected_*.json`, note:
+  "labels matched to predictions by subject ID"). The original `statistics_*.json` numbers and the
+  v1/v2 numbers in §7 are from before that correction. Paper tables: `outputs/paper/tables/`.
+- v3 corrected, mean of 2 runs (`table_performance_v3.csv`), accuracy ADNI test -> OASIS-1:
+  supervised 51.6% -> 32.8%, SimCLR fine-tuned 45.9% -> 19.2%, SimCLR linear probe 40.2% -> 18.4%.
+  Only 2 runs: no claim that SSL is better/worse may be made from these alone.
+- **v4 is being prepared (code done, data NOT yet complete, NOT run):** too few AD subjects (36)
+  was the main data problem. v4 = 250 subjects per class, scanner-matched (manufacturer x field
+  strength mix of CN and MCI equal to AD), one first-visit scan per subject, 5 runs (seeds 43-47),
+  same training settings as v3. Branch `claude/magical-franklin-artw55`:
+  - `tools/select_balanced_subjects.py` reads the 6 IDA search exports `data/raw/ADNI_search_*.csv`
+    (AD/CN/MCI x description `*MPRAGE*` / `*MP-RAGE*`; filters: Original, T1, SAGITTAL, 3D, MRI,
+    first visits only: ADNI Screening/Baseline, ADNIGO Screening MRI, ADNI2 Screening(-MRI)/
+    Baseline-New Pt, ADNI4 Screening/Baseline-New Pt), prefers subjects already on disk, writes
+    `data/raw/ADNI_selection_250_<stamp>.csv` + `..._TO_DOWNLOAD.txt` (IDs in blocks of 100).
+  - The chosen selection is copied to `data/raw/ADNI_selection_v4.csv`, which `src/experiment.py`
+    (`SELECTION_FILE`, `EXPERIMENT_VERSION = "v4_balanced250"`) passes to `MRIDataset(selection_file=...)`.
+    `src/dataset.py` then uses only those subjects, their label, and the scan from the listed study
+    date (falls back to the earliest scan on disk and reports it). Tested on synthetic DICOMs incl.
+    an interrupted + resumed run.
+  - Expected v4 run time on the CPU laptop: roughly 7-10 days for 5 runs. Do not start it without
+    the user's explicit OK and the Windows Update / power / sleep precautions.
+- ADNI Data Use Agreement: ADNI images and IDA exports must not be committed to git (data/ is
+  ignored) or shared with people who are not approved ADNI users.
+
+---
+
 ## 1. Research question
 
 **"Does self-supervised contrastive pretraining (SimCLR) improve cross-dataset generalization
@@ -16,8 +48,8 @@ of Alzheimer's disease MRI classification compared with conventional supervised 
 - Supervised arm: ResNet-18 trained from scratch on labels.
 - SSL arm: SimCLR contrastive pretraining of the same ResNet-18 encoder (no labels), then
   (a) full fine-tuning and (b, from v3) a linear probe on the frozen encoder.
-- Source dataset: ADNI. Target dataset for cross-cohort testing: OASIS — **NOT obtained yet,
-  so cross-dataset generalization has NOT been tested at all.** All results so far are within-ADNI.
+- Source dataset: ADNI. Target dataset for cross-cohort testing: OASIS-1 (obtained and evaluated
+  for v2/v3 on 18 Oct 2026 — see §0; earlier text below predates this).
 - Metrics: subject-level accuracy, macro precision/recall/F1 (also ROC-AUC planned), and the
   generalization gap (within-ADNI minus cross-OASIS performance) once OASIS exists.
 - Leakage prevention: subject-level train/val/test split (70/15/15), slices of one subject never
